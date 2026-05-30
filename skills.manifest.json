@@ -1,0 +1,77 @@
+{
+  "$comment": "Which source skills to pull into OpenClaw, and the OpenClaw gating to attach. sourcePath is relative to a codex-my-marketplace checkout. gating becomes metadata.openclaw on the generated SKILL.md frontmatter (single-line JSON, per the OpenClaw parser). Omit/empty gating => always eligible.",
+  "sharedAssets": [
+    {
+      "$comment": "office unpack/pack/validate (pure-python) + soffice.py (needs LibreOffice, degrades gracefully) + OOXML XSD schemas. Shared by docx/pptx/xlsx; referenced as {baseDir}/../_office-shared/scripts/office/*.",
+      "sourcePath": "plugins/office-plugin/scripts",
+      "dest": "_office-shared/scripts"
+    }
+  ],
+  "skills": [
+    {
+      "name": "visual-planning",
+      "sourcePath": "plugins/media-plugin/skills/visual-planning",
+      "gating": { "always": true }
+    },
+    {
+      "name": "media-prompt-craft",
+      "sourcePath": "plugins/design-plugin/skills/media-prompt-craft",
+      "gating": { "always": true }
+    },
+    {
+      "name": "image-generation",
+      "sourcePath": "plugins/media-plugin/skills/image-generation",
+      "gating": { "requires": { "bins": ["uv"], "env": ["GEMINI_API_KEY"] }, "primaryEnv": "GEMINI_API_KEY" }
+    },
+    {
+      "name": "video-generation",
+      "sourcePath": "plugins/media-plugin/skills/video-generation",
+      "gating": { "requires": { "bins": ["uv"], "env": ["GEMINI_API_KEY"] }, "primaryEnv": "GEMINI_API_KEY" }
+    },
+    {
+      "name": "music-generation",
+      "sourcePath": "plugins/media-plugin/skills/music-generation",
+      "gating": { "requires": { "bins": ["uv"], "env": ["GEMINI_API_KEY"] }, "primaryEnv": "GEMINI_API_KEY" }
+    },
+    {
+      "name": "speech-generation",
+      "sourcePath": "plugins/media-plugin/skills/speech-generation",
+      "gating": { "requires": { "bins": ["uv"], "env": ["ELEVENLABS_API_KEY"] }, "primaryEnv": "ELEVENLABS_API_KEY" }
+    },
+    {
+      "name": "graph-generation",
+      "sourcePath": "plugins/media-plugin/skills/graph-generation",
+      "gating": { "requires": { "bins": ["node"] } }
+    },
+    {
+      "name": "icon-library",
+      "sourcePath": "plugins/media-plugin/skills/icon-library",
+      "gating": {}
+    },
+    {
+      "name": "image-sourcing",
+      "sourcePath": "plugins/media-plugin/skills/image-sourcing",
+      "gating": {}
+    },
+    {
+      "name": "svg-mastery",
+      "sourcePath": "plugins/media-plugin/skills/svg-mastery",
+      "gating": {}
+    },
+    {
+      "name": "docx",
+      "sourcePath": "plugins/office-plugin/skills/docx",
+      "gating": { "requires": { "bins": ["node"] } }
+    },
+    {
+      "name": "pptx",
+      "sourcePath": "plugins/office-plugin/skills/pptx",
+      "gating": { "requires": { "bins": ["node"] } }
+    },
+    {
+      "name": "xlsx",
+      "sourcePath": "plugins/office-plugin/skills/xlsx",
+      "gating": { "requires": { "bins": ["uv"] } }
+    }
+  ]
+}

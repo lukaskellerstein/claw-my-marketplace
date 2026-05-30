@@ -1,0 +1,6 @@
+{
+  "$comment": "OpenClaw agents.list[] fragment. Merge this object into agents.list[] in the bot's openclaw.json so the main agent can target it via sessions_spawn(agentId: \"media-director\"). Subagents inject only AGENTS.md + TOOLS.md from the workspace below. Model is left unset to inherit agents.defaults.model (openai/gpt-5.5); set agents.defaults.subagents.model to run subagents cheaper. Requires the main agent to have sessions_spawn (tools.profile coding|full, or tools.alsoAllow).",
+  "id": "media-director",
+  "name": "media-director",
+  "workspace": "~/.openclaw/subagents/media-director"
+}

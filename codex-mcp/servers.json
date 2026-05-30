@@ -1,0 +1,33 @@
+{
+  "$comment": "MCP servers the exec-agent pod registers with `codex mcp add` into CODEX_HOME. Codex-harness turns only see MCP through Codex's own config, NOT openclaw.json. toolchain/install.sh reads this file. A stdio server is skipped when any of its `requires` env vars is unset. drawio MCP is intentionally absent: @drawio/mcp opens a desktop editor (GUI), useless headless — the graph-generation skill renders drawio via its bundled postprocessor + playwright instead.",
+  "servers": {
+    "media-mcp": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["media-mcp"],
+      "env": ["GEMINI_API_KEY", "MEDIA_OUTPUT_DIR"],
+      "requires": ["GEMINI_API_KEY"],
+      "description": "Gemini image/video/music generation (generate_image, generate_video, generate_music)"
+    },
+    "elevenlabs": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["elevenlabs-mcp"],
+      "env": ["ELEVENLABS_API_KEY"],
+      "requires": ["ELEVENLABS_API_KEY"],
+      "description": "ElevenLabs text-to-speech and audio (text_to_speech, ...)"
+    },
+    "mermaid": {
+      "type": "http",
+      "url": "https://mcp.mermaid.ai/mcp",
+      "description": "Hosted Mermaid diagram rendering for the graph-generation skill"
+    },
+    "media-playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@playwright/mcp@latest", "--headless"],
+      "requires": [],
+      "description": "Headless browser to render D3.js charts and capture PNGs for the graph-generation skill"
+    }
+  }
+}

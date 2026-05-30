@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+
+# Node deps built into skills in the pod (postprocessor, svg-mastery scripts)
+node_modules/
+
+# Pod-side venvs / installs (never created locally, but guard anyway)
+office-venv/
+*.installed-*
+
+# OS
+.DS_Store
