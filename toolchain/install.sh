@@ -50,19 +50,23 @@ find "$SKILLS_DIR" -name package.json -not -path '*/node_modules/*' 2>/dev/null 
   fi
 done
 
-# 3. Office python (xlsx via openpyxl, doc reading via markitdown, OOXML
-#    unpack/pack/validate via lxml/defusedxml). Installed into a uv venv so the
-#    office scripts resolve their imports. soffice/LibreOffice is NOT installed —
-#    the skills already degrade gracefully (skip thumbnail/PDF/recalc QA).
-OFFICE_PY_VERSION="claw-1"
+# 3. Office python (xlsx via openpyxl, data analysis via pandas, OOXML
+#    unpack/pack/validate via lxml/defusedxml, images via Pillow). Installed into a
+#    uv venv so the office scripts resolve their imports. soffice/LibreOffice is NOT
+#    installed — the skills degrade gracefully (skip thumbnail/PDF/recalc QA).
+#    markitdown is EXCLUDED: it pulls torch+onnxruntime+nvidia CUDA (~2GB) we don't
+#    need; doc reading uses the lxml unpack/validate path instead.
+OFFICE_PY_VERSION="claw-2"
 if [ ! -f "$OFFICE_VENV/.installed-${OFFICE_PY_VERSION}" ]; then
-  if uv venv "$OFFICE_VENV" >/dev/null 2>&1 \
+  rm -rf "$OFFICE_VENV"
+  if uv venv "$OFFICE_VENV" 2>/tmp/office-venv.log \
      && uv pip install --python "$OFFICE_VENV/bin/python" \
-          openpyxl pandas lxml defusedxml "markitdown[docx,pptx,xlsx]" Pillow >/dev/null 2>&1; then
+          openpyxl pandas lxml defusedxml Pillow 2>>/tmp/office-venv.log; then
     touch "$OFFICE_VENV/.installed-${OFFICE_PY_VERSION}"
-    log "office python venv ready at $OFFICE_VENV (openpyxl/pandas/lxml/markitdown)"
+    log "office python venv ready at $OFFICE_VENV (openpyxl/pandas/lxml/Pillow)"
   else
-    log "office python venv install failed; continuing (xlsx/editing degraded)"
+    log "office python venv install failed (xlsx/editing degraded); reason:"
+    tail -5 /tmp/office-venv.log 2>/dev/null | sed 's/^/install.sh:   /'
   fi
 fi
 
