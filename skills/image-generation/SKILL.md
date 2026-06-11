@@ -46,12 +46,22 @@ If your prompt reads like *"glowing holographic [concept], dark background, blue
 | Parameter | Type | Description |
 |---|---|---|
 | `prompt` | string (required) | Detailed description of the desired image |
-| `model` | string | Model variant (default varies) |
-| `aspect_ratio` | string | `"1:1"`, `"3:4"`, `"4:3"`, `"9:16"`, `"16:9"` |
-| `resolution` | string | From `"512"` up to `"4k"` |
-| `reference_images` | array | Reference images for style/content guidance. Each entry may be a **file path** (preferred — e.g. a previously generated/sourced image), a `data:image/...;base64,...` data-URI, or a raw base64 string. **Prefer file paths** — passing megabytes of base64 inline bloats the conversation history. |
-| `thinking` | string | Thinking level for complex prompts |
-| `google_search` | boolean | Enable Google Search grounding for realistic/factual images |
+| `model` | string | `"nano-banana-2"` (default, fast), `"nano-banana-pro"` (highest quality, much slower), `"nano-banana"` |
+| `aspect_ratio` | string | `"1:1"` (default), `"2:3"`, `"3:2"`, `"3:4"`, `"4:3"`, `"4:5"`, `"5:4"`, `"9:16"`, `"16:9"`, `"21:9"`, plus extreme ratios `"1:4"`, `"4:1"`, `"1:8"`, `"8:1"` |
+| `image_size` | string | `"512px"`, `"1K"` (default), `"2K"`, `"4K"` |
+| `reference_images` | array | Reference images for style/content/likeness guidance. Each entry may be a `data:image/...;base64,...` data-URI, a raw base64 string, or a **file path** *(only resolves if the file is readable by the media-mcp server process)*. **This media-mcp runs as a remote shared service**, so a path on the agent host (e.g. a workspace file) is NOT visible to it — pass those images as base64/data-URI instead. Reference a server-local file path only for images the server itself produced. |
+| `thinking_level` | string | `"minimal"` (default) or `"high"` for complex prompts |
+| `use_google_search` | boolean | Enable Google Search grounding for realistic/factual images |
+
+### Latency — pick the lightest setting that meets the need
+
+The call is a single synchronous Gemini generation; **time scales with model, resolution, and reference-image count**. Heavy combinations (e.g. `nano-banana-pro` at `2K`/`4K` with several reference photos for likeness) can run for **minutes**.
+
+- **Iterating / drafts:** `nano-banana-2` at `1K` — fast, good enough to judge composition.
+- **Final assets:** step up to `2K`/`4K` or `nano-banana-pro` only once the prompt is locked.
+- **Reference images:** keep to the **few** that matter. Each one is conditioning the model and adds latency; 3+ high-res likeness references is the slow path.
+
+If a generation fails with a `[timeout]` error, drop to `nano-banana-2`/`1K` and fewer references rather than blindly retrying the same heavy request.
 
 ## Prompt Writing Guidelines
 
@@ -131,6 +141,6 @@ After generation you can:
 
 ## Tips
 
-- Enable `google_search: true` when generating images of real products, landmarks, or factual content
-- Use higher resolution (`"4k"`) for final assets, lower (`"512"`) for quick iterations
+- Enable `use_google_search: true` when generating images of real products, landmarks, or factual content
+- Use higher resolution (`"4K"`) for final assets, lower (`"512px"`) for quick iterations
 - When generating multiple related images, describe a consistent style in every prompt to maintain visual coherence
